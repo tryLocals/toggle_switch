@@ -45,7 +45,7 @@ class ToggleSwitch extends StatefulWidget {
   final List<TextStyle?>? customTextStyles;
 
   /// List of custom icons
-  final List<Icon?>? customIcons;
+  final List<Widget?>? customIcons;
 
   /// List of custom widths
   final List<double>? customWidths;
@@ -194,7 +194,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
           widget.customIcons?.length ?? 0
         ].reduce(max);
 
-    final List<bool> states=widget.states?? List<bool>.filled(totalSwitches,true);
+    final List<bool> states =
+        widget.states ?? List<bool>.filled(totalSwitches, true);
     super.build(context);
 
     /// Assigns active background color to default primary theme color if it's null/not provided.
@@ -245,7 +246,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
             mainAxisSize: MainAxisSize.min,
             children: List.generate(totalSwitches * 2 - 1, (index) {
               /// Active if index matches current
-              final active = index ~/ 2 == widget.initialLabelIndex && states[index~/ 2];
+              final active =
+                  index ~/ 2 == widget.initialLabelIndex && states[index ~/ 2];
 
               /// Assigns foreground color based on active status.
               ///
@@ -323,29 +325,33 @@ class _ToggleSwitchState extends State<ToggleSwitch>
 
                 /// Assigns empty widget if icon is null
                 /// Calculates icon's size to prevent overflow
-                var icon = widget.icons != null &&
-                        widget.icons![index ~/ 2] != null
-                    ? Icon(
-                        widget.icons![index ~/ 2],
-                        color: fgColor,
-                        size: widget.isVertical
-                            ? widget.iconSize >
-                                    (_calculateHeight(
-                                            index ~/ 2, totalSwitches) /
-                                        3)
-                                ? (_calculateHeight(
-                                        index ~/ 2, totalSwitches)) /
-                                    3
-                                : widget.iconSize
-                            : widget.iconSize >
-                                    (_calculateWidth(
-                                            index ~/ 2, totalSwitches) /
-                                        3)
-                                ? (_calculateWidth(index ~/ 2, totalSwitches)) /
-                                    3
-                                : widget.iconSize,
-                      )
-                    : Container();
+                Widget icon =
+                    widget.icons != null && widget.icons![index ~/ 2] != null
+                        ? Padding(
+                            padding: EdgeInsetsDirectional.only(start: 5.0),
+                            child: Icon(
+                              widget.icons![index ~/ 2],
+                              color: fgColor,
+                              size: widget.isVertical
+                                  ? widget.iconSize >
+                                          (_calculateHeight(
+                                                  index ~/ 2, totalSwitches) /
+                                              3)
+                                      ? (_calculateHeight(
+                                              index ~/ 2, totalSwitches)) /
+                                          3
+                                      : widget.iconSize
+                                  : widget.iconSize >
+                                          (_calculateWidth(
+                                                  index ~/ 2, totalSwitches) /
+                                              3)
+                                      ? (_calculateWidth(
+                                              index ~/ 2, totalSwitches)) /
+                                          3
+                                      : widget.iconSize,
+                            ),
+                          )
+                        : Container();
 
                 /// Assigns custom icon if available.
                 /// Overrides icons passed via icons:
@@ -409,7 +415,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
 
                 /// Returns switch item
                 return GestureDetector(
-                  onTap: () =>states[index ~/ 2] ?_handleOnTap(index ~/ 2) : null,
+                  onTap: () =>
+                      states[index ~/ 2] ? _handleOnTap(index ~/ 2) : null,
                   child: AnimatedContainer(
                     padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                     constraints: BoxConstraints(
@@ -444,18 +451,14 @@ class _ToggleSwitchState extends State<ToggleSwitch>
                       children: <Widget>[
                         icon,
                         Flexible(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                left: (icon is Container) ? 0.0 : 5.0),
-                            child: Text(
-                              widget.labels?[index ~/ 2] ?? '',
-                              textAlign:
-                                  (widget.centerText) ? TextAlign.center : null,
-                              style: textStyle,
-                              overflow: (!widget.multiLineText)
-                                  ? TextOverflow.ellipsis
-                                  : null,
-                            ),
+                          child: Text(
+                            widget.labels?[index ~/ 2] ?? '',
+                            textAlign:
+                                (widget.centerText) ? TextAlign.center : null,
+                            style: textStyle,
+                            overflow: (!widget.multiLineText)
+                                ? TextOverflow.ellipsis
+                                : null,
                           ),
                         ),
                       ],
