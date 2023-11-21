@@ -53,6 +53,9 @@ class ToggleSwitch extends StatefulWidget {
   /// List of custom heights
   final List<double>? customHeights;
 
+  /// Space between switches
+  final double switchesSpacing;
+
   /// Minimum switch width
   final double minWidth;
 
@@ -137,6 +140,7 @@ class ToggleSwitch extends StatefulWidget {
       this.initialLabelIndex = 0,
       this.minWidth = 72.0,
       this.minHeight = 40.0,
+      this.switchesSpacing = 0,
       this.changeOnTap = true,
       this.icons,
       this.activeBgColors,
@@ -192,23 +196,29 @@ class _ToggleSwitchState extends State<ToggleSwitch>
   Widget build(BuildContext context) {
     /// Searches for largest totalSwitches value
     final int totalSwitches = widget.totalSwitches ??
-        [widget.labels?.length ?? 0, widget.icons?.length ?? 0, widget.customIcons?.length ?? 0]
-            .reduce(max);
+        [
+          widget.labels?.length ?? 0,
+          widget.icons?.length ?? 0,
+          widget.customIcons?.length ?? 0
+        ].reduce(max);
 
-    final List<bool> states = widget.states ?? List<bool>.filled(totalSwitches, true);
+    final List<bool> states =
+        widget.states ?? List<bool>.filled(totalSwitches, true);
     super.build(context);
 
     /// Assigns active background color to default primary theme color if it's null/not provided.
     activeBgColor = widget.activeBgColor ?? [Theme.of(context).primaryColor];
 
     /// Assigns active foreground color to default accent text theme color if it's null/not provided.
-    activeFgColor = widget.activeFgColor ?? Theme.of(context).primaryTextTheme.bodyLarge!.color;
+    activeFgColor = widget.activeFgColor ??
+        Theme.of(context).primaryTextTheme.bodyLarge!.color;
 
     /// Assigns inactive background color to default disabled theme color if it's null/not provided.
     inactiveBgColor = widget.inactiveBgColor ?? Theme.of(context).disabledColor;
 
     /// Assigns inactive foreground color to default text theme color if it's null/not provided.
-    inactiveFgColor = widget.inactiveFgColor ?? Theme.of(context).textTheme.bodyLarge!.color;
+    inactiveFgColor =
+        widget.inactiveFgColor ?? Theme.of(context).textTheme.bodyLarge!.color;
 
     /// Assigns transparent border color if it's null/not provided.
     borderColor = widget.borderColor ?? [Colors.transparent];
@@ -217,14 +227,17 @@ class _ToggleSwitchState extends State<ToggleSwitch>
     ///
     /// Assigns default border width of 0.0 if border color is null.
     /// Assigns default border width of 3.0 if border width is null but border color is not.
-    borderWidth = widget.borderWidth ?? (widget.borderColor == null ? 0.0 : 3.0);
+    borderWidth =
+        widget.borderWidth ?? (widget.borderColor == null ? 0.0 : 3.0);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.cornerRadius),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: borderColor!.length == 1 ? [borderColor![0], borderColor![0]] : borderColor!,
+            colors: borderColor!.length == 1
+                ? [borderColor![0], borderColor![0]]
+                : borderColor!,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -232,7 +245,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
         child: Container(
           margin: EdgeInsets.all(borderWidth!),
           decoration: BoxDecoration(
-              color: inactiveBgColor, borderRadius: BorderRadius.circular(widget.cornerRadius)),
+              color: inactiveBgColor,
+              borderRadius: BorderRadius.circular(widget.cornerRadius)),
           height: !widget.isVertical ? widget.minHeight + borderWidth! : null,
           width: widget.isVertical ? widget.minWidth + borderWidth! : null,
           child: RowToColumn(
@@ -241,7 +255,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
             mainAxisAlignment: widget.mainAxisAlignment,
             children: List.generate(totalSwitches * 2 - 1, (index) {
               /// Active if index matches current
-              final active = index ~/ 2 == widget.initialLabelIndex && states[index ~/ 2];
+              final active =
+                  index ~/ 2 == widget.initialLabelIndex && states[index ~/ 2];
 
               /// Assigns foreground color based on active status.
               ///
@@ -271,11 +286,15 @@ class _ToggleSwitchState extends State<ToggleSwitch>
                 return Container(
                   width: !widget.isVertical ? 1 : double.infinity,
                   height: widget.isVertical ? 1 : double.infinity,
-                  color: activeDivider ? Colors.transparent : widget.dividerColor,
+                  color:
+                      activeDivider ? Colors.transparent : widget.dividerColor,
                   margin: widget.isVertical
                       ? EdgeInsets.symmetric(
-                          horizontal: activeDivider ? 0.0 : widget.dividerMargin!)
-                      : EdgeInsets.symmetric(vertical: activeDivider ? 0.0 : widget.dividerMargin!),
+                          horizontal:
+                              activeDivider ? 0.0 : widget.dividerMargin!)
+                      : EdgeInsets.symmetric(
+                          vertical:
+                              activeDivider ? 0.0 : widget.dividerMargin!),
                 );
               } else {
                 /// Matches corner radius of active switch to that of border
@@ -315,26 +334,38 @@ class _ToggleSwitchState extends State<ToggleSwitch>
 
                 /// Assigns empty widget if icon is null
                 /// Calculates icon's size to prevent overflow
-                Widget icon = widget.icons != null && widget.icons![index ~/ 2] != null
-                    ? Padding(
-                        padding: EdgeInsetsDirectional.only(start: 5.0),
-                        child: Icon(
-                          widget.icons![index ~/ 2],
-                          color: fgColor,
-                          size: widget.isVertical
-                              ? widget.iconSize > (_calculateHeight(index ~/ 2, totalSwitches) / 3)
-                                  ? (_calculateHeight(index ~/ 2, totalSwitches)) / 3
-                                  : widget.iconSize
-                              : widget.iconSize > (_calculateWidth(index ~/ 2, totalSwitches) / 3)
-                                  ? (_calculateWidth(index ~/ 2, totalSwitches)) / 3
-                                  : widget.iconSize,
-                        ),
-                      )
-                    : Container();
+                Widget icon =
+                    widget.icons != null && widget.icons![index ~/ 2] != null
+                        ? Padding(
+                            padding: EdgeInsetsDirectional.only(start: 5.0),
+                            child: Icon(
+                              widget.icons![index ~/ 2],
+                              color: fgColor,
+                              size: widget.isVertical
+                                  ? widget.iconSize >
+                                          (_calculateHeight(
+                                                  index ~/ 2, totalSwitches) /
+                                              3)
+                                      ? (_calculateHeight(
+                                              index ~/ 2, totalSwitches)) /
+                                          3
+                                      : widget.iconSize
+                                  : widget.iconSize >
+                                          (_calculateWidth(
+                                                  index ~/ 2, totalSwitches) /
+                                              3)
+                                      ? (_calculateWidth(
+                                              index ~/ 2, totalSwitches)) /
+                                          3
+                                      : widget.iconSize,
+                            ),
+                          )
+                        : Container();
 
                 /// Assigns custom icon if available.
                 /// Overrides icons passed via icons:
-                if (widget.customIcons != null && widget.customIcons![index ~/ 2] != null) {
+                if (widget.customIcons != null &&
+                    widget.customIcons![index ~/ 2] != null) {
                   icon = widget.customIcons![index ~/ 2]!;
                 }
 
@@ -392,45 +423,59 @@ class _ToggleSwitchState extends State<ToggleSwitch>
                 }
 
                 /// Returns switch item
-                return GestureDetector(
-                  onTap: () => states[index ~/ 2] ? _handleOnTap(index ~/ 2) : null,
-                  child: AnimatedContainer(
-                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                    constraints: BoxConstraints(
-                      maxWidth: widget.isVertical
-                          ? BoxConstraints().maxWidth
-                          : _calculateWidth(index ~/ 2, totalSwitches),
-                      maxHeight: widget.isVertical
-                          ? _calculateHeight(index ~/ 2, totalSwitches)
-                          : BoxConstraints().maxHeight,
-                    ),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: active ? activeBorder : null,
-                      borderRadius: widget.radiusStyle
-                          ? BorderRadius.all(Radius.circular(widget.cornerRadius))
-                          : cornerRadius,
-                      gradient: LinearGradient(
-                        colors: bgColor!.length == 1 ? [bgColor[0], bgColor[0]] : bgColor,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                return Padding(
+                  padding: EdgeInsetsDirectional.only(
+                    start: index == 0 ? 0 : widget.switchesSpacing,
+                  ),
+                  child: GestureDetector(
+                    onTap: () =>
+                        states[index ~/ 2] ? _handleOnTap(index ~/ 2) : null,
+                    child: AnimatedContainer(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      constraints: BoxConstraints(
+                        maxWidth: widget.isVertical
+                            ? BoxConstraints().maxWidth
+                            : _calculateWidth(index ~/ 2, totalSwitches),
+                        maxHeight: widget.isVertical
+                            ? _calculateHeight(index ~/ 2, totalSwitches)
+                            : BoxConstraints().maxHeight,
                       ),
-                    ),
-                    duration: Duration(milliseconds: widget.animate ? widget.animationDuration : 0),
-                    curve: widget.curve,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        icon,
-                        Flexible(
-                          child: Text(
-                            widget.labels?[index ~/ 2] ?? '',
-                            textAlign: (widget.centerText) ? TextAlign.center : null,
-                            style: textStyle,
-                            overflow: (!widget.multiLineText) ? TextOverflow.ellipsis : null,
-                          ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: active ? activeBorder : null,
+                        borderRadius: widget.radiusStyle
+                            ? BorderRadius.all(
+                                Radius.circular(widget.cornerRadius))
+                            : cornerRadius,
+                        gradient: LinearGradient(
+                          colors: bgColor!.length == 1
+                              ? [bgColor[0], bgColor[0]]
+                              : bgColor,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ],
+                      ),
+                      duration: Duration(
+                          milliseconds:
+                              widget.animate ? widget.animationDuration : 0),
+                      curve: widget.curve,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          icon,
+                          Flexible(
+                            child: Text(
+                              widget.labels?[index ~/ 2] ?? '',
+                              textAlign:
+                                  (widget.centerText) ? TextAlign.center : null,
+                              style: textStyle,
+                              overflow: (!widget.multiLineText)
+                                  ? TextOverflow.ellipsis
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -533,7 +578,8 @@ class RowToColumn extends StatelessWidget {
             children: children,
             mainAxisAlignment: mainAxisAlignment ?? Column().mainAxisAlignment,
             mainAxisSize: mainAxisSize ?? Column().mainAxisSize,
-            crossAxisAlignment: crossAxisAlignment ?? Column().crossAxisAlignment,
+            crossAxisAlignment:
+                crossAxisAlignment ?? Column().crossAxisAlignment,
           );
   }
 }
