@@ -470,18 +470,16 @@ class _ToggleSwitchState extends State<ToggleSwitch>
     );
   }
 
-  bool disableDoubleTap(int index) {
-    return widget.doubleTapDisable && selectedIndex == index;
-  }
-
   /// Handles selection
   void _handleOnTap(int newIndex) async {
+    if (widget.doubleTapDisable && selectedIndex == newIndex) return;
+
     final cancel = await widget.cancelToggle?.call(newIndex) ?? false;
     if (cancel) {
       return;
     }
 
-    if (widget.changeOnTap && !disableDoubleTap(newIndex)) {
+    if (widget.changeOnTap) {
       setState(() => selectedIndex = newIndex);
     }
 
