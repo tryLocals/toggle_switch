@@ -474,8 +474,8 @@ class _ToggleSwitchState extends State<ToggleSwitch>
   void _handleOnTap(int newIndex) async {
     if (widget.doubleTapDisable && selectedIndex == newIndex) return;
 
-    final cancel = await widget.cancelToggle?.call(newIndex) ?? false;
-    if (cancel) {
+    final cancelToggle = widget.cancelToggle;
+    if (cancelToggle != null && await cancelToggle.call(newIndex)) {
       return;
     }
 
